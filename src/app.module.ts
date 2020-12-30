@@ -1,10 +1,32 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import {join} from 'path'
+import { UserModule } from './user/user.module';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import { User } from './user/entities/user.entity';
+import { CRS } from './crs/entities/crs.entity';
+import { CrsModule } from './crs/crs.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      "type": "postgres",
+      "host": "localhost",
+      "port": 5432,
+      "username": "postgres",
+      "password": "shsbsy70",
+      "database": "ircc",
+      "synchronize": true,
+      "logging": false,
+      "entities":[User, CRS]
+    }),
+    GraphQLModule.forRoot({autoSchemaFile: true}),
+    UserModule,
+    CrsModule,
+    UploadsModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
