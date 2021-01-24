@@ -7,6 +7,7 @@ import { User } from './user/entities/user.entity';
 import { CRS } from './crs/entities/crs.entity';
 import { CrsModule } from './crs/crs.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { CreateSchemaModule } from './schema/schema.module';
 
 @Module({
   imports: [
@@ -19,12 +20,13 @@ import { UploadsModule } from './uploads/uploads.module';
       "database": "ircc",
       "synchronize": true,
       "logging": false,
-      "entities":[User, CRS]
+      "entities":[User, CRS],
     }),
     GraphQLModule.forRoot({autoSchemaFile: true}),
     UserModule,
     CrsModule,
     UploadsModule,
+    CreateSchemaModule,
   ],
   controllers: [],
   providers: [],

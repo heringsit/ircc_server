@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
   UploadedFile,
@@ -21,19 +22,19 @@ let sheets = [];
 @Controller('uploads')
 export class UploadsController {
   constructor() { }
-  @Post('')
+  @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file) {
+  async uploadFile(@UploadedFile() file, @Body() data) {
     try {
       console.log("file => ", file);
+      console.log("project => ", data.project);
       client.connect(); // postgre 접속
       const workbook = xlsx.read(file.buffer);
       let sheetNameList = workbook.SheetNames; // 시트 이름 목록 가져오기
       try {
         for (let i = 0; i < sheetNameList.length; i++) {
-          this.createTable(workbook.Sheets[sheetNameList[i]], sheetNameList[i]);
+          this.createTable(workbook.Sheets[sheetNameList[i]], data.project+"."+sheetNameList[i]);
         }
-        
       } catch (ex) {
         console.log("exception => ", ex);
       }
@@ -96,6 +97,18 @@ export class UploadsController {
         let insertValues = "";
         rows.forEach((each,index) =>{
           Object.values(each).forEach((val,idx) =>{
+            if(val === null){
+              if(types[idx] === 'text'){
+                val = '';
+              }else if(types[idx] === 'integer'){
+                val = 0;
+              }else if(types[idx] === 'real'){
+                val = 0.0;
+              }else if(types[idx] === 'date'){
+                val = "2021-01-01";
+              }
+            }
+
             if(idx === 0){
               insertValues = insertValues + `('${val}',`
             }else if(idx !== Object.values(each).length-1){
@@ -112,10 +125,10 @@ export class UploadsController {
         client.query(insertSQL, (insertErr, insertRes)=>{
           if(insertErr){
             console.error(insertErr);
+            console.log("insertSQL => ", insertSQL);
             return;
           }
           console.log('Values are successfully inserted');
-
         });
       });
       
@@ -123,11 +136,6 @@ export class UploadsController {
     } else {
       return false
     }
-  }
-
-  getTalbeInfo(sheetNameList: string, fieldsInfo: Array<string>): Object {
-    let tableInfo = { "tableName": "aaaa", "fields": ['name', 'email', 'age'], type: ['text', 'text', 'number'] };
-    return tableInfo
   }
 
 }
