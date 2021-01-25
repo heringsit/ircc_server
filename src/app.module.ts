@@ -16,7 +16,7 @@ import { CreateSchemaModule } from './schema/schema.module';
       "host": "localhost",
       "port": 5432,
       "username": "postgres",
-      "password": "shsbsy70",
+      "password": "herings",
       "database": "ircc",
       "synchronize": true,
       "logging": false,

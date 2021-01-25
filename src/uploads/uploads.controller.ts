@@ -12,7 +12,7 @@ const client = new Client({
   user: 'postgres',
   host: 'localhost',
   database: 'ircc',
-  password: 'shsbsy70',
+  password: 'herings',
   port: 5432,
 });
 
